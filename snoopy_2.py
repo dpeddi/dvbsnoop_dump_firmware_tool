@@ -116,7 +116,7 @@ def main():
                                         foprogress.write("_")
                                     fpcnt+=1
                             foprogress.closed
-            bytes_read = bytes_read[next_block:len(bytes_read)]
+            bytes_read = bytes_read[next_block:len(bytes_read)+1-next_block]
             cnt+=1
     return 0
 
