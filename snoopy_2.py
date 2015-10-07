@@ -28,8 +28,13 @@ def main():
         align = False
         next_block = 1
         cnt=0
-        for bytes_read_chksum in fh:
-            bytes_read += bytes_read_chksum[4:0xbc] #remove ts chksum!?
+        while True:
+            chunk = fh.read(0xbc)
+            if len(chunk)<0xbc:
+                break
+        #for chunk in fh.read(0xbc):
+            #print "chunk",len(chunk)
+            bytes_read += chunk[4:0xbc] #remove ts chksum!?
         
             #align block
             #while not align:
@@ -43,7 +48,7 @@ def main():
             #        break
             #print len(bytes_read)
             #print len(bytes_read),(ord(bytes_read[2]) << 0x08 | ord(bytes_read[3])) & 0x0FFF
-            if  (len(bytes_read) >4) and (len(bytes_read) >= (ord(bytes_read[2]) << 0x08 | ord(bytes_read[3])) & 0x0FFF) and \
+            if  (len(bytes_read) >=3) and (len(bytes_read) >= (ord(bytes_read[2]) << 0x08 | ord(bytes_read[3])) & 0x0FFF) and \
                 (ord(bytes_read[0]) == 0x00) and \
                 (ord(bytes_read[1]) == 0xb5 or ord(bytes_read[1]) == 0xb6):
                   section_type = ord(bytes_read[ 4]) << 0x08 | ord(bytes_read[ 5])
@@ -52,12 +57,14 @@ def main():
                   fw_version   = ord(bytes_read[16])
                   file_offset  = ord(bytes_read[17]) << 0x18 | ord(bytes_read[18]) << 0x10 | ord(bytes_read[19]) << 0x08 | ord(bytes_read[20])
                   file_length  = ord(bytes_read[21]) << 0x18 | ord(bytes_read[22]) << 0x10 | ord(bytes_read[23]) << 0x08 | ord(bytes_read[24])
-                  print "SECTION_TYPE:%04x" % section_type
-                  print "CNT:",cnt
+                  #print "SECTION_TYPE:%04x" % section_type
+                  #print "CNT:",cnt
                   if (section_type == 0x0000 or section_type == 0x0001 or section_type == 0xffff) and box_model != 0xffff :
                     block_length =(ord(bytes_read[ 2]) << 0x08 | ord(bytes_read[ 3])) & 0x0FFF
-                    print cnt,block_length,next_block
-                    next_block = block_length - 25 -4
+                    #print cnt,block_length,next_block
+                    #next_block = block_length  -100
+                    #next_block = block_length  -100
+                    next_block=block_length
                     try:
                         vendorname=Vendor[vendor]
                     except:
@@ -72,7 +79,7 @@ def main():
 
                         #foinfo = open(filename+".info",'a+')
 
-                        msg = "BLOCK LENGTH: %04x SECTION %04x VENDOR %10s MODEL %04x FW_VER  %04x F_OFFSET %04x F_LENGTH %6d" % ( block_length, section_type, vendorname,box_model, fw_version, file_offset, file_length /1024/1024)
+                        msg = "BLOCK LENGTH: %04x SECTION %04x VENDOR %10s MODEL %04x FW_VER  %04x F_OFFSET %04x F_LENGTH %6d Mb" % ( block_length, section_type, vendorname,box_model, fw_version, file_offset, file_length /1024/1024)
                         print msg
                         #foinfo.write(msg+"\n")
                     
@@ -118,10 +125,8 @@ def main():
                             foprogress.closed
             else:
                next_block=1
-            print "next_block",next_block,len(bytes_read)
-            bytes_read = bytes_read[next_block:len(bytes_read)+1-next_block]
-            print "next_block",next_block,len(bytes_read)
-            cnt+=1
+            bytes_read = bytes_read[next_block:len(bytes_read)]
+            cnt+=next_block
     return 0
 
 if __name__ == '__main__':
