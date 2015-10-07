@@ -13,7 +13,11 @@ import fileinput
 #sys.stdout = os.fdopen(sys.stdout.fileno(), 'wb', 0)
 #signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-Vendor = {0x5e: 'Thompson', 0x9e: 'Samsung', 0xaf: 'Pace', 0xcb: 'Amstrad'}
+Vendor = {0x5e: 'Thompson', 
+          0x9e: 'Samsung_',
+          0xaf: 'Pace____',
+          0xcb: 'Amstrad_'
+        }
 
 def main():
     if len(sys.argv) != 2:
@@ -79,7 +83,7 @@ def main():
 
                         #foinfo = open(filename+".info",'a+')
 
-                        msg = "BLOCK LENGTH: %04x SECTION %04x VENDOR %10s MODEL %04x FW_VER  %04x F_OFFSET %04x F_LENGTH %6d Mb" % ( block_length, section_type, vendorname,box_model, fw_version, file_offset, file_length /1024/1024)
+                        msg = "BLOCK LENGTH: %04x SECTION %04x VENDOR %10s MODEL %04x FW_VER  %04x F_OFFSET %08x F_LENGTH %5d Mb" % ( block_length, section_type, vendorname,box_model, fw_version, file_offset, file_length /1024/1024)
                         print msg
                         #foinfo.write(msg+"\n")
                     
