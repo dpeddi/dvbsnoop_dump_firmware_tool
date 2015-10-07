@@ -53,11 +53,11 @@ def main():
                   file_offset  = ord(bytes_read[17]) << 0x18 | ord(bytes_read[18]) << 0x10 | ord(bytes_read[19]) << 0x08 | ord(bytes_read[20])
                   file_length  = ord(bytes_read[21]) << 0x18 | ord(bytes_read[22]) << 0x10 | ord(bytes_read[23]) << 0x08 | ord(bytes_read[24])
                   print "SECTION_TYPE:%04x" % section_type
-                  print cnt
+                  print "CNT:",cnt
                   if (section_type == 0x0000 or section_type == 0x0001 or section_type == 0xffff) and box_model != 0xffff :
                     block_length =(ord(bytes_read[ 2]) << 0x08 | ord(bytes_read[ 3])) & 0x0FFF
                     print cnt,block_length,next_block
-                    next_block = 1 #block_length -2
+                    next_block = block_length - 25 -4
                     try:
                         vendorname=Vendor[vendor]
                     except:
@@ -116,7 +116,11 @@ def main():
                                         foprogress.write("_")
                                     fpcnt+=1
                             foprogress.closed
+            else:
+               next_block=1
+            print "next_block",next_block,len(bytes_read)
             bytes_read = bytes_read[next_block:len(bytes_read)+1-next_block]
+            print "next_block",next_block,len(bytes_read)
             cnt+=1
     return 0
 
