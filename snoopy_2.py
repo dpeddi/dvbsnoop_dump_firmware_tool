@@ -14,9 +14,9 @@ import fileinput
 #signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
 Vendor = {0x5e: 'Thompson', 
-          0x9e: 'Samsung_',
-          0xaf: 'Pace____',
-          0xcb: 'Amstrad_'
+          0x9e: 'Samsung ',
+          0xaf: 'Pace    ',
+          0xcb: 'Amstrad '
         }
 
 def main():
@@ -52,9 +52,11 @@ def main():
             #        break
             #print len(bytes_read)
             #print len(bytes_read),(ord(bytes_read[2]) << 0x08 | ord(bytes_read[3])) & 0x0FFF
+            sys.stdout.write(".")
             if  (len(bytes_read) >=3) and (len(bytes_read) >= (ord(bytes_read[2]) << 0x08 | ord(bytes_read[3])) & 0x0FFF) and \
                 (ord(bytes_read[0]) == 0x00) and \
                 (ord(bytes_read[1]) == 0xb5 or ord(bytes_read[1]) == 0xb6):
+                  sys.stdout.write('\n')
                   section_type = ord(bytes_read[ 4]) << 0x08 | ord(bytes_read[ 5])
                   box_model    = ord(bytes_read[10]) << 0x08 | ord(bytes_read[12])
                   vendor       = ord(bytes_read[10])
@@ -70,9 +72,9 @@ def main():
                     #next_block = block_length  -100
                     next_block=block_length
                     try:
-                        vendorname=Vendor[vendor]
+                        vendorname=("%- 12sx" % Vendor[vendor]).replace(" ","_")
                     except:
-                        vendorname='unknown-0x%02x'%vendor
+                        vendorname='unknown-0x%02x' % vendor
                     filename = "FW/SKY_FW_%s_%04x_%02x_%04x" %  (vendorname,box_model, fw_version, section_type)
 
                     if not os.path.isfile(filename+".fw"):
