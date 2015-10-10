@@ -13,6 +13,12 @@ sys.stdin = os.fdopen(sys.stdin.fileno(), 'rb', 0)
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'wb', 0)
 signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
+Vendor = {0x5e: 'Thompson',
+          0x9e: 'Samsung ',
+          0xaf: 'Pace    ',
+          0xcb: 'Amstrad '
+        }
+
 def main():
     for arg in sys.argv[1:]:
         fh = arg == '-' and sys.stdin or open(arg, 'rb', 0)
@@ -40,6 +46,7 @@ def main():
                 if (len(bytes_read) - b  > 1) and ord(bytes_read[b]) == 0x00 and ( ord(bytes_read[b+1]) == 0xb5 or ord(bytes_read[b+1]) == 0xb6):
                   block_length =(ord(bytes_read[b+ 2]) << 0x08 | ord(bytes_read[b+ 3])) & 0x0FFF
                   section_type = ord(bytes_read[b+ 4]) << 0x08 | ord(bytes_read[b+ 5])
+                  vendor       = ord(bytes_read[b+10])
                   box_model    = ord(bytes_read[b+10]) << 0x08 | ord(bytes_read[b+12])
                   fw_version   = ord(bytes_read[b+16])
                   file_offset  = ord(bytes_read[b+17]) << 0x18 | ord(bytes_read[b+18]) << 0x10 | ord(bytes_read[b+19]) << 0x08 | ord(bytes_read[b+20])
@@ -47,8 +54,12 @@ def main():
                   if (section_type == 0x0000 or section_type == 0x0001 or section_type == 0xffff) and box_model != 0xffff :
                     b+=4
 
-                    filename = "FW/SKY_FW_"+"%04x_%02x_%04x" %  (box_model, fw_version, section_type)
+                    try:
+                        vendorname=("%- 12sx" % Vendor[vendor]).replace(" ","_")
+                    except:
+                        vendorname='unknown-0x%02x' % vendor
 
+                    filename = "FW/SKY_FW_%s_%04x_%02x_%04x" %  (vendorname,box_model, fw_version, section_type)
 
                     if not os.path.isfile(filename+".fw"):
                         try:
