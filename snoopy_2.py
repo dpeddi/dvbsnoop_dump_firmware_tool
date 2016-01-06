@@ -19,6 +19,20 @@ Vendor = {0x5e: 'Thompson',
           0xcb: 'Amstrad '
         }
 
+Product = {0xcb0c:'BSB892I',
+           0xcb0d:'BSB890I',
+           0xcb0e:'drx780i',
+           0xcb0f:'drx700i',
+           0xaf0a:'ds830ns',
+           0xaf0b:'DS480NS',
+           0xaf0c:'DS820NS',
+           0xaf0d:'TDS850NS',
+           0xaf0e:'TDS810n',
+           0xaf10:'TDS865NS',
+           0xaf11:'DS830NS',
+           0x9e0e:'DSB-990V',
+}
+
 def main():
     for arg in sys.argv[1:]:
         fh = arg == '-' and sys.stdin or open(arg, 'rb', 0)
@@ -59,7 +73,12 @@ def main():
                     except:
                         vendorname='unknown-0x%02x' % vendor
 
-                    filename = "FW/SKY_FW_%s_%04x_%02x_%04x" %  (vendorname,box_model, fw_version, section_type)
+                    try:
+                        productname=("%- 10s" % Product[box_model]).replace(" ","_")
+                    except:
+                        productname=("%- 10s" % "unknown").replace(" ","_")
+
+                    filename = "FW/SKY_FW_%s_%04x_%10s_%02x_%04x" %  (vendorname,box_model, productname, fw_version, section_type)
 
                     if not os.path.isfile(filename+".fw"):
                         try:
