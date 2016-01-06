@@ -13,7 +13,7 @@ sys.stdin = os.fdopen(sys.stdin.fileno(), 'rb', 0)
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'wb', 0)
 signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
-Vendor = {0x5e: 'Thompson',
+Vendor = {0x5e: 'Thomson',
           0x9e: 'Samsung ',
           0xaf: 'Pace    ',
           0xcb: 'Amstrad '
