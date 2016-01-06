@@ -31,6 +31,7 @@ Product = {0xcb0c:'BSB892I',
            0xaf10:'TDS865NS',
            0xaf11:'DS830NS',
            0x9e0e:'DSB-990V',
+           0x5e0f:'DH310',
 }
 
 def main():
